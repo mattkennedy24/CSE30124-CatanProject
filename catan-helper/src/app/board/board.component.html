@@ -1,0 +1,11 @@
+<div class="catan-board">
+    <!-- Loop through the 19 hexagon tiles -->
+    <ng-container *ngFor="let tile of catanTiles; let i = index">
+      <div class="hexagon-tile">
+        <!-- Number Token Input -->
+        <input type="text" [(ngModel)]="tile.numberToken" placeholder="Token" />
+        <!-- Resource Input -->
+        <input type="text" [(ngModel)]="tile.resource" placeholder="Resource" />
+      </div>
+    </ng-container>
+</div>
