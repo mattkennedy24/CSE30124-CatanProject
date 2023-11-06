@@ -1,0 +1,17 @@
+.catan-board {
+    display: flex;
+    flex-wrap: wrap;
+}
+  
+.hexagon-tile {
+    width: 100px; 
+    height: 115px;
+    margin: 5px;
+    position: relative;
+}
+  
+.hexagon-tile input {
+    position: absolute;
+    width: 100%;
+}
+  
