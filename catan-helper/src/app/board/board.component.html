@@ -1,11 +1,22 @@
+<h1>Welcome to the Catan AI Helper</h1>
+<br>
+<h2>Instructions</h2>
+<p>Before I can help you win your game, I need to know what your Catan Board looks like. Fill out the form below using the image to guide your input. "w, s, o, t, b, empty" stands for "wheat, sheep, ore, tree, brick, and sand tiles." The number token is number of dots on the circular number card that is associated to each tile. For the empty sand tile, input 0 for the number token. Select submit when you are done!</p>
 <div class="catan-board">
-    <!-- Loop through the 19 hexagon tiles -->
-    <ng-container *ngFor="let tile of catanTiles; let i = index">
-      <div class="hexagon-tile">
-        <!-- Number Token Input -->
-        <input type="text" [(ngModel)]="tile.numberToken" placeholder="Token" />
-        <!-- Resource Input -->
-        <input type="text" [(ngModel)]="tile.resource" placeholder="Resource" />
-      </div>
-    </ng-container>
-</div>
+    <!-- Include the Catan board image centered -->
+    <img src="../../assets/blankCatanBoard.png" alt="Catan Board" class="center-image">
+  
+    <!-- Create a form for each tile -->
+    <pre>      Resource           Number Token</pre>
+    <form>
+        <div *ngFor="let tile of tiles; let i = index">
+        <label>Tile {{i + 1}} </label>
+            <input [(ngModel)]="tiles[i].resource" name="resource{{ i }}" placeholder="w, s, o, t, b, empty" />
+            <input [(ngModel)]="tiles[i].numberToken" name="numberToken{{ i }}" placeholder="Number Token {{ i + 1 }}" />
+        </div>
+     </form>
+  
+    <!-- Add a submit button to trigger form submission -->
+    <button type="button" (click)="submitForm()">Submit</button>
+  </div>
+  
