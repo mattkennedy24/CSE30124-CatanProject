@@ -18,6 +18,7 @@ export class BoardComponent {
     console.log('Form submitted');
     
     const catanBoard = new Board(this.tiles)
+    console.log(catanBoard)
     this.router.navigate(['/chat', { catanBoard }]);
   }
 }
