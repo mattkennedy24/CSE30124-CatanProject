@@ -12,13 +12,15 @@ import { Router } from '@angular/router';
 export class BoardComponent {
   constructor(private router: Router) {}
 
-  tiles: Tile[] = Array.from({ length: 19 }, (_, i) => new Tile(0, '', i));
+  tiles: Tile[] = Array.from({ length: 19 }, (_, i) => new Tile('', '', i, ''));
   // Add a method to handle form submission
   submitForm() {
     console.log('Form submitted');
     
     const catanBoard = new Board(this.tiles)
-    console.log(catanBoard)
-    this.router.navigate(['/chat', { catanBoard }]);
+    // console.log(catanBoard)
+    // this.router.navigate(['/chat', { catanBoard }]);
+    this.router.navigate(['/chat'], { queryParams: { catanBoard: JSON.stringify(catanBoard) } });
+
   }
 }

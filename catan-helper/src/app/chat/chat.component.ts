@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CsvService } from '../service/csvData.service'; // Import your CsvService
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Board } from '../models/board.model';
+import { Tile } from '../models/tile.model';
 
 @Component({
   selector: 'app-chat',
@@ -9,66 +11,122 @@ import { CsvService } from '../service/csvData.service'; // Import your CsvServi
 })
 export class ChatComponent implements OnInit {
   catanBoard: any;
-  catanStatsData!: any[]; // Variable to hold catan_stats.csv data
-  catanScoresData!: any[]; // Variable to hold catanScores.csv data
+  dataSet1: any;
+  recs: any;
+  first_recs: any;
+  second_recs: any;
 
-  // Data structure to hold settlement placement locations
-  settlementSpots = {
-    threeTileSpots: [
-      [0, 1, 4], [2, 5, 6], [1, 2, 5], [3, 4, 8], [0, 3, 4], [4, 5, 9],
-      [1, 4, 5], [5, 6, 10], [3, 7, 8], [4, 8, 9], [5, 9, 10], [6, 10, 11],
-      [7, 8, 12], [8, 9, 13], [9, 10, 14], [10, 11, 15], [8, 12, 13],
-      [9, 13, 14], [10, 14, 15], [12, 13, 16], [13, 14, 17], [14, 15, 8],
-      [13, 16, 17], [14, 17, 18]
-    ],
-    twoTileSpots: [
-      [0, 1], [1, 2], [0, 3], [2, 6], [6, 11], [11, 15], [15, 18],
-      [18, 17], [16, 17], [12, 16], [7, 12], [3, 7]
-    ],
-    oneTileSpots: [0, 1, 2, 6, 11, 15, 18, 17, 16, 12, 7, 3]
-  };
+  positionChartUrl: string | null = null;
+  diceChartUrl: string | null = null;
+  featureChartUrl:  string | null = null;
+
+  // Booleans to control visibility
+  showFirstRecommendation = false;
+  showSecondRecommendation = false;
+  showPositionImportance = false;
+  showBoardGraphic = false;
+  showFeaturePlot = false;
+  showDicePlot = false;
+
 
   constructor(
     private route: ActivatedRoute,
-    private csvService: CsvService
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      this.catanBoard = params.get('catanBoard');
+    this.route.queryParams.subscribe(params => {
+      this.catanBoard = JSON.parse(params['catanBoard']);
       console.log('User Board data:', this.catanBoard);
-
     });
-
-    // Fetch and parse catanstats.csv data
-    this.csvService.getCsvData('catanstats.csv').subscribe(
-      (data) => {
-        this.catanStatsData = data;
-        console.log('Parsed catan_stats.csv data:', this.catanStatsData);
+    this.sendBoardData(this.catanBoard)
+  }
+  // Define a method to send the user's catan board to the flask api for processing and to give user recommendation for settlement placement
+  sendBoardData(boardData: any): void {
+    const plainBoardData = JSON.parse(JSON.stringify(boardData));
+    console.log(plainBoardData)
+    const apiUrl = 'http://127.0.0.1:5000/api/recommend_settlement'; 
+  
+    this.http.post(apiUrl, { plainBoardData }).subscribe(
+      (response: any) => {
+        this.recs = response.recommendation;
+        console.log('Recommendation Response:', response.recommendation);
+        // Process the recommendation response here
       },
       (error) => {
-        console.error('Error fetching catan_stats.csv data:', error);
-      }
-    );
-
-    // Fetch and parse catan_scores.csv data
-    this.csvService.getCsvData('catan_scores.csv').subscribe(
-      (data) => {
-        
-        this.catanScoresData = data;
-
-        console.log('Parsed catanScores.csv data:', this.catanScoresData);
-      },
-      (error) => {
-        console.error('Error fetching catanScores.csv data:', error);
+        console.error('Error sending board data:', error);
       }
     );
   }
 
-  // Now that we have imported the board and csv data, rank the best intitial settlement placement locations
 
+  // Method to handle the first settlement question
+  askFirstSettlement() {
+    this.first_recs = this.recs[0];
+    this.showFirstRecommendation = true;
+    this.showBoardGraphic = true;
+  }
+
+  // Method to handle the second settlement question
+  askSecondSettlement() {
+    this.second_recs = this.recs[1];
+    this.showSecondRecommendation = true;
+    this.showBoardGraphic = true;
+
+  }
+
+  // Add a method to get object keys
+  getObjectKeys(obj: any): string[] {
+    return Object.keys(obj);
+  }
+
+  askPosition() {
+    // Add logic to fetch position importance chart
+    const apiUrl = 'http://127.0.0.1:5000/api/position_importance_chart';
   
+    this.http.get(apiUrl, { responseType: 'blob' }).subscribe(
+      (response: Blob) => {
+        const blob = new Blob([response], { type: 'image/png' });
+        this.positionChartUrl = URL.createObjectURL(blob);
+        this.showPositionImportance = true;
+      },
+      (error) => {
+        console.error('Error fetching position importance chart:', error);
+      }
+    );
+  }
 
+  askDice() {
+    // Add logic to fetch position importance chart
+    const apiUrl = 'http://127.0.0.1:5000/api/dice_roll_plot';
+  
+    this.http.get(apiUrl, { responseType: 'blob' }).subscribe(
+      (response: Blob) => {
+        const blob = new Blob([response], { type: 'image/png' });
+        this.diceChartUrl = URL.createObjectURL(blob);
+        this.showDicePlot = true;
+      },
+      (error) => {
+        console.error('Error fetching position importance chart:', error);
+      }
+    );
+  }
 
+  askFeatureImportance() {
+    // Add logic to fetch position importance chart
+    const apiUrl = 'http://127.0.0.1:5000/api/feature_importance_plot';
+  
+    this.http.get(apiUrl, { responseType: 'blob' }).subscribe(
+      (response: Blob) => {
+        const blob = new Blob([response], { type: 'image/png' });
+        this.featureChartUrl = URL.createObjectURL(blob);
+        this.showFeaturePlot = true;
+      },
+      (error) => {
+        console.error('Error fetching position importance chart:', error);
+      }
+    );
+  }
 
 }
+
