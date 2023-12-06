@@ -1,13 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { BoardComponent } from './board/board.component';
+import { ChatComponent } from './chat/chat.component'
 
 const routes: Routes = [
   { path: '', component: BoardComponent }, // Set BoardComponent as the landing page
+  { path: 'chat', component: ChatComponent }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class AppRoutingModule { }

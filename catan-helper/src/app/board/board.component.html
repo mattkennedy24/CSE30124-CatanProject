@@ -1,18 +1,40 @@
-<h1>Welcome to the Catan AI Helper</h1>
+<h1>Catan AI Helper</h1>
 <br>
 <h2>Instructions</h2>
-<p>Before I can help you win your game, I need to know what your Catan Board looks like. Fill out the form below using the image to guide your input. "w, s, o, t, b, empty" stands for "wheat, sheep, ore, tree, brick, and sand tiles." The number token is number of dots on the circular number card that is associated to each tile. For the empty sand tile, input 0 for the number token. Select submit when you are done!</p>
+<pre>Before I can help you win your game, I need to know what your Catan Board looks like. Fill out the form below using the image and the criteria below to guide your input. 
+    
+    L = lumber
+
+    C = clay
+    
+    S = sheep
+    
+    W = wheat
+    
+    O = ore
+    
+    3G = 3:1 general port
+    
+    2(X) = 2:1 port for resource X (ex: 2L if the tile touches a 2:1 Lumber port)
+    
+    D = desert 
+    
+The number token is simply the number on the circular card that is associated to each tile. For the empty desert tile, input 0 for the number token.</pre>
+<p><b>Important Note for Registering Ports:</b> only include the ports that have a dock at the intersection of two tiles, and only input a port for 1 tile. There should be no tiles that have multiple ports..</p>
+
+<p><b>Select 'Submit' when you are done</b></p>
 <div class="catan-board">
     <!-- Include the Catan board image centered -->
     <img src="../../assets/blankCatanBoard.png" alt="Catan Board" class="center-image">
   
     <!-- Create a form for each tile -->
-    <pre>      Resource           Number Token</pre>
+    <pre><b>      Resource           Number Token       Port</b></pre>
     <form>
         <div *ngFor="let tile of tiles; let i = index">
         <label>Tile {{i + 1}} </label>
-            <input [(ngModel)]="tiles[i].resource" name="resource{{ i }}" placeholder="w, s, o, t, b, empty" />
+            <input [(ngModel)]="tiles[i].resource" name="resource{{ i }}" placeholder="L, C, O, S, W, or D" />
             <input [(ngModel)]="tiles[i].numberToken" name="numberToken{{ i }}" placeholder="Number Token {{ i + 1 }}" />
+            <input [(ngModel)]="tiles[i].port" name="port{{ i }}" placeholder="Leave Blank if No Port" />
         </div>
      </form>
   

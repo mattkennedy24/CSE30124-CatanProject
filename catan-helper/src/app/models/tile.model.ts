@@ -1,12 +1,14 @@
 export class Tile {
-    numberToken: number;
+    numberToken: string;
     resource: string;
     location: number;
+    port: string;
   
-    constructor(numberToken: number, resource: string, location: number) {
+    constructor(numberToken: string, resource: string, location: number, port: string) {
       this.numberToken = numberToken;
       this.resource = resource;
       this.location = location;
+      this.port = port;
     }
 }
   
